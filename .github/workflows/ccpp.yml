@@ -1,0 +1,60 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
+
+jobs:
+
+  format-check:
+    runs-on: ubuntu-latest
+    script:
+    - uses: actions/checkout@v2
+    - name: install dependencies
+      run: sudo apt update && sudo apt install -yy clang-tidy    
+    - name: check
+      run: |
+        find . -name '*.cpp' -or -name '*.hpp' -exec clang-format -i -style=file '{}' ';'
+        git status -s
+        exit $(git status -s | wc -l)
+
+  release:
+    runs-on: ubuntu-latest
+    script:
+    - uses: actions/checkout@v2
+    - name: install dependencies
+      run: sudo apt update && sudo apt install -yy clang-tidy    
+    - name: configure
+      run: cmake -BRelease -DCMAKE_BUILD_TYPE=Release .
+    - name: build
+      run: cmake -build Release
+        
+
+  
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: install dependencies
+      run: sudo apt update && sudo apt install -yy clang-tidy    
+    - name: configure debug
+      run: mkdir Debug; cd Debug; cmake -DCMAKE_CXX_CLANG_TIDY=clang-tidy -DCMAKE_BUILD_TYPE=Debug ..; cd ..
+    - name: build debug
+      run: cmake --build Debug --target Tests
+    - name: test debug
+      run: ./Debug/Tests
+    - name: configure release
+      run: mkdir Release; cd Release; cmake -DCMAKE_BUILD_TYPE=Release ..; cd ..
+    - name: build release
+      run: cmake --build Release
+    - name: benchmark release
+      run: mkdir benchmarks; ./Release/Benchmarks --benchmark_out=benchmarks/raw.json
+    - name: archive benchmark results
+      uses: actions/upload-artifact@v1
+      with:
+        name: benchmarks
+        path: benchmarks
