@@ -48,6 +48,8 @@ ExternalProject_Add(catch2
 set(VTune_DIR "" CACHE PATH "Where to look for VTune installation")
 find_path(ITT_NOTIFY_INCLUDE_DIR "ittnotify.h" HINTS ${VTune_DIR}/include)
 
+find_package(cpprestsdk REQUIRED)
+
 #################################### Targets ####################################
 
 
@@ -60,6 +62,8 @@ set(BenchmarkFiles Benchmarks/OneStreamBenchmarks.cpp)
 add_executable(OneStream ${ImplementationFiles} ${ExecutableFiles})
 set_property(TARGET OneStream PROPERTY CXX_STANDARD 17)
 target_include_directories(OneStream SYSTEM PUBLIC ${OneStream_BINARY_DIR}/deps/include)
+target_link_libraries(OneStream PRIVATE cpprestsdk::cpprest)
+
 
 add_executable(Tests ${ImplementationFiles} ${TestFiles})
 set_property(TARGET Tests PROPERTY CXX_STANDARD 17)
