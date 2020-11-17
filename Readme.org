@@ -1,2 +1,10 @@
 * OneStream
 
+** Building
+(works for me as of today)
+#+begin_src
+cd $(mktemp -d)
+git clone git@github.com:little-big-h/OneStream.git
+OPENSSL_ROOT_DIR=/usr/local/Cellar/openssl@1.1/1.1.1h cmake -DOPENSSL_SSL_LIBRARY=/usr/local/Cellar/openssl@1.1/1.1.1h/lib/libssl.dylib -DOPENSSL_CRYPTO_LIBRARY=/usr/local/Cellar/openssl@1.1/1.1.1h/lib/libcrypto.dylib -BRelease  -DCMAKE_BUILD_TYPE=Release OneStream
+cmake --build Release
+#+end_src
