@@ -269,7 +269,7 @@ int wmain(int argc, wchar_t* argv[])
 int main(int argc, char* argv[])
 #endif
 {
-  if(argc == 3) {
+  if(argc != 4) {
     std::cout << "usage: OneStream ${filename} ${oauth app key} ${oauth app secret}" << std::endl;
     return 1;
   }
